@@ -47,3 +47,8 @@ paypal.payment.create({
 app.listen(3000, () => {
 console.log('API running on http://localhost:3000');
 });
+app.listen(3000, () => {
+  console.log('API running on http://localhost:3000');
+});
+
+module.exports = app;   
