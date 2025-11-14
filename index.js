@@ -2,6 +2,7 @@ const express = require('express');
 const { ApiPromise, WsProvider } = require('@polkadot/api');
 const paypal = require('paypal-rest-sdk');
 
+// PayPal config (uses env vars on Railway)
 paypal.configure({
   mode: 'sandbox',
   client_id: process.env.PAYPAL_CLIENT_ID || 'YOUR_PAYPAL_ID',
@@ -11,6 +12,7 @@ paypal.configure({
 const app = express();
 app.use(express.json());
 
+// Polkadot connection (Kusama)
 let api;
 async function connectPolkadot() {
   try {
@@ -23,6 +25,7 @@ async function connectPolkadot() {
 }
 connectPolkadot();
 
+// Start earning session
 app.post('/start', async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: 'Email required' });
@@ -30,11 +33,13 @@ app.post('/start', async (req, res) => {
   res.json({ ok: true, message: 'Session started' });
 });
 
+// SDK init
 app.post('/sdk/init', (req, res) => {
   console.log('SDK init', req.body);
   res.json({ ok: true });
 });
 
+// PoP verify + PayPal payout
 app.post('/pop/verify', async (req, res) => {
   const { sessionId, playTime } = req.body;
   if (!sessionId || !playTime) return res.status(400).json({ error: 'Missing data' });
@@ -65,11 +70,19 @@ app.post('/pop/verify', async (req, res) => {
   });
 });
 
+// Error handling
 app.use((err, req, res, next) => {
   console.error('Server error:', err);
   res.status(500).json({ error: 'Internal server error' });
 });
 
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully');
+  process.exit(0);
+});
+
+// Start server on dynamic port (Railway)
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`API running on port ${port}`);
