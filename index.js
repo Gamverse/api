@@ -84,8 +84,8 @@ process.on('SIGTERM', () => {
 
 // Start server on dynamic port (Railway)
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`API running on port ${port}`);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`API running on 0.0.0.0:${port}`);
 });
 
 module.exports = app;
