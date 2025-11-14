@@ -25,6 +25,11 @@ async function connectPolkadot() {
 }
 connectPolkadot();
 
+// Health check endpoint (keeps Railway warm)
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
 // Start earning session
 app.post('/start', async (req, res) => {
   const { email } = req.body;
@@ -82,7 +87,7 @@ process.on('SIGTERM', () => {
   process.exit(0);
 });
 
-// Start server on dynamic port (Railway)
+// Start server on dynamic port and all interfaces (Railway)
 const port = process.env.PORT || 3000;
 app.listen(port, '0.0.0.0', () => {
   console.log(`API running on 0.0.0.0:${port}`);
