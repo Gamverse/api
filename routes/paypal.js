@@ -1,4 +1,5 @@
-import express from "express";
+
+const express = require("express");
 const router = express.Router();
 
 router.post("/webhook", (req, res) => {
@@ -6,4 +7,4 @@ router.post("/webhook", (req, res) => {
   res.sendStatus(200);
 });
 
-export default router;
+module.exports = router;
