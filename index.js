@@ -1,7 +1,5 @@
 import paypalWebhook from "./routes/paypal.js";
 const express = require('express');
-app.use(express.json({ type: "*/*" }));      // Needed for PayPal
-app.use("/paypal", paypalWebhook);           // Final webhook = /paypal/webhook
 const { ApiPromise, WsProvider } = require('@polkadot/api');
 const paypal = require('paypal-rest-sdk');
 
@@ -13,6 +11,8 @@ paypal.configure({
 });
 
 const app = express();
+app.use(express.json({ type: "*/*" }));      // Needed for PayPal
+app.use("/paypal", paypalWebhook);           // Final webhook = /paypal/webhook
 app.use(express.json());
 
 // Polkadot connection (Kusama)
