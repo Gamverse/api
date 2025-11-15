@@ -1,4 +1,4 @@
-import paypalWebhook from "./routes/paypal.js";
+const paypalWebhook = require("./routes/paypal");
 const express = require('express');
 const { ApiPromise, WsProvider } = require('@polkadot/api');
 const paypal = require('paypal-rest-sdk');
