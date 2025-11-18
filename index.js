@@ -79,3 +79,8 @@ app.listen(port, '0.0.0.0', () => {
 });
 
 module.exports = app;
+app.post('/start', (req, res) => {
+  const { email } = req.body;
+  console.log('Session started for:', email || 'anonymous');
+  res.json({ ok: true, message: 'Session started' });
+});
