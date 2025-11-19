@@ -1,13 +1,24 @@
-
 const express = require("express");
 const app = express();
+
+// Required for Polkadot/Kusama
+const { ApiPromise, WsProvider } = require('@polkadot/api');
+
+// Required for PayPal payouts
+const paypal = require("@paypal/payouts-sdk");
+
+// Parse JSON
 app.use(express.json());
-// Load PayPal webhook router
+
+// ----------------------
+// PAYPAL WEBHOOK ROUTE
+// ----------------------
 const paypalWebhook = require("./routes/paypal");
 app.use("/paypal", paypalWebhook);
 
-
-// Polkadot connection (Kusama)
+// ----------------------
+// KUSAMA CONNECTION (your original code)
+// ----------------------
 let api;
 async function connectPolkadot() {
   try {
@@ -20,28 +31,36 @@ async function connectPolkadot() {
 }
 connectPolkadot();
 
-// Start earning session
+// ----------------------
+// START SESSION (your original)
+// ----------------------
 app.post('/start', async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: 'Email required' });
+
   console.log('Session started for:', email);
   res.json({ ok: true, message: 'Session started' });
 });
 
-// SDK init
+// ----------------------
+// SDK INIT (your original)
+// ----------------------
 app.post('/sdk/init', (req, res) => {
   console.log('SDK init', req.body);
   res.json({ ok: true });
 });
 
-// PoP verify + PayPal payout
+// ----------------------
+// POP VERIFY + PAYPAL PAYOUT (your original)
+// ----------------------
 app.post('/pop/verify', async (req, res) => {
   const { sessionId, playTime, email } = req.body;
-  if (!sessionId || !playTime || !email) return res.status(400).json({ error: 'Missing data' });
+  if (!sessionId || !playTime || !email)
+    return res.status(400).json({ error: 'Missing data' });
 
   console.log('Verifying play time:', playTime, 'minutes for', email);
 
-  const payout = {
+  const payoutRequest = {
     sender_batch_header: {
       email_subject: 'You earned £25!',
       email_message: 'Thanks for playing Gamverse!'
@@ -56,7 +75,7 @@ app.post('/pop/verify', async (req, res) => {
     ]
   };
 
-  paypal.payout.create(payout, (error, payout) => {
+  paypal.payout.create(payoutRequest, (error, payout) => {
     if (error) {
       console.error('PayPal error:', error);
       return res.json({ error: 'Payment failed' });
@@ -65,22 +84,25 @@ app.post('/pop/verify', async (req, res) => {
   });
 });
 
-// Health check
+// ----------------------
+// HEALTH CHECK (your original)
+// ----------------------
 app.get('/health', (req, res) => {
   res.json({ status: 'OK' });
 });
 
-// Error handling
+// ----------------------
+// ERROR HANDLER (your original)
+// ----------------------
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Internal server error' });
 });
 
-// Start server on dynamic port
+// ----------------------
+// START SERVER — ONLY ONCE
+// ----------------------
 const port = process.env.PORT || 3000;
-app.listen(port, '0.0.0.0', () => {
-  console.log(`API running on 0.0.0.0:${port}`);
-});
 app.listen(port, '0.0.0.0', () => {
   console.log(`API running on 0.0.0.0:${port}`);
 });
