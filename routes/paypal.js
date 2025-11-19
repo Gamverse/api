@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
 
-// GET endpoint so PayPal can verify the URL and the browser can test it
+// GET route so browser and PayPal validator see OK.
 router.get("/webhook", (req, res) => {
   res.status(200).send("OK - PayPal webhook receiver");
 });
 
-// POST endpoint for actual PayPal events
+// POST route (actual PayPal webhook delivery)
 router.post("/webhook", (req, res) => {
   console.log("PayPal Webhook Received:", JSON.stringify(req.body, null, 2));
-  res.sendStatus(200); // Must return 200 immediately
+  res.sendStatus(200);
 });
 
 module.exports = router;
