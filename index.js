@@ -2,6 +2,10 @@
 const express = require("express");
 const app = express();
 app.use(express.json());
+// Load PayPal webhook router
+const paypalWebhook = require("./routes/paypal");
+app.use("/paypal", paypalWebhook);
+
 
 // Polkadot connection (Kusama)
 let api;
@@ -77,10 +81,7 @@ const port = process.env.PORT || 3000;
 app.listen(port, '0.0.0.0', () => {
   console.log(`API running on 0.0.0.0:${port}`);
 });
-
-module.exports = app;
-app.post('/start', (req, res) => {
-  const { email } = req.body;
-  console.log('Session started for:', email || 'anonymous');
-  res.json({ ok: true, message: 'Session started' });
+app.listen(port, '0.0.0.0', () => {
+  console.log(`API running on 0.0.0.0:${port}`);
 });
+
